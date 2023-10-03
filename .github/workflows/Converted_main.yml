@@ -25,7 +25,7 @@ jobs:
       run: mvn org.owasp:dependency-check-maven:aggregate
       
     - name: Build Docker Image
-      run: docker build -t image .
+      run: docker build -t mahec/image .
       
     - name: Push Docker Image
       run: |
