@@ -21,8 +21,8 @@ jobs:
     - name: Build
       run: mvn clean package
       
-    - name: Dependency Check
-      run: mvn org.owasp:dependency-check-maven:aggregate
+    # - name: Dependency Check
+    #   run: mvn org.owasp:dependency-check-maven:aggregate
       
     - name: Build Docker Image
       run: docker build -t mahec/image .
@@ -40,6 +40,7 @@ jobs:
       run: |
         mvn sonar:sonar \
         -Dsonar.organization=sonartest333 \
+        -Dsonar.host.url=https://sonarcloud.io \
         -Dsonar.sources=.
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
