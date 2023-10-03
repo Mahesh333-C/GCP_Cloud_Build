@@ -53,5 +53,5 @@ jobs:
     #     DOCKER_HUB_CREDENTIALS: ${{ secrets.DOCKERHUBPWD }}
     #   run: |
     #     echo "${DOCKER_HUB_CREDENTIALS}" | docker login -u mahec --password-stdin
-        docker tag mahec/devops-integration docker.io/mahec/demo
-        docker push mahec/demo
+    #     docker tag mahec/devops-integration docker.io/mahec/demo
+    #     docker push mahec/demo
