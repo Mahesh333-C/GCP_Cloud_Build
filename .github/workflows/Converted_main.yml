@@ -39,6 +39,7 @@ jobs:
     - name: SonarCloud Code Analysis
       run: |
         mvn sonar:sonar \
+        -Dsonar.projectKey=sonartest333 \
         -Dsonar.organization=sonartest333 \
         -Dsonar.host.url=https://sonarcloud.io \
         -Dsonar.sources=.
