@@ -25,7 +25,9 @@ jobs:
           mvn clean install --batch-mode --no-transfer-progress 
 
       - name: Run SonarCloud
-        uses: SonarSource/sonarcloud-github-action@v2.0.2
+        run: mvn clean install sonar:sonar \
+            -Dsonar.organization=Mahesh333-C \
+            -Dsonar.login=SONAR_TOKEN
 
       - name: Run Snyk
         run: npx snyk test --all-projects --all-sub-projects --org=my-org
