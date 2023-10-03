@@ -25,10 +25,10 @@ jobs:
           mvn clean install --batch-mode --no-transfer-progress 
 
       - name: Run SonarCloud
-        run: mvn clean install sonar:sonar \
-            -Dsonar.organization=sonartest333 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=SONAR_TOKEN
+        run: mvn sonar:sonar \
+          -Dsonar.organization=sonartest333 \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.sources=.
 
       - name: Run Snyk
         run: npx snyk test --all-projects --all-sub-projects --org=my-org
