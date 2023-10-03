@@ -30,6 +30,7 @@ jobs:
     - name: Push Docker Image
       run: |
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker tag mahec/image mahec/demo
         docker push mahec/demo
         
     - name: Snyk Code Scanning
