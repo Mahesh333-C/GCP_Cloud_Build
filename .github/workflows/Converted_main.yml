@@ -22,7 +22,7 @@ jobs:
 
       - name: Build and test
         run: |
-          ./mvn clean install --batch-mode --no-transfer-progress 
+          mvn clean install --batch-mode --no-transfer-progress 
 
       - name: Run SonarCloud
         uses: sonarsource/sonarcloud-github-action@master
