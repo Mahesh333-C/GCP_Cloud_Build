@@ -42,7 +42,7 @@ jobs:
         ls -la
 
     - name: SonarCloud Code Analysis
-      uses: sonarsource/sonarcloud-github-action@v1
+      uses: sonarsource/sonarcloud-github-action@v2.0.2
       with:
         organization: "mahesh333-c"
         projectKey: "Mahesh333-C_Conversion"
