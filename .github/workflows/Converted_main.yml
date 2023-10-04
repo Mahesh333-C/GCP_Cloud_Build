@@ -39,7 +39,7 @@ jobs:
     - name: SonarCloud Code Analysis
       run: |
         mvn sonar:sonar \
-        -Dsonar.projectKey=Conversion \
-        -Dsonar.organization=Mahesh333-C \
+        -Dsonar.projectKey=Mahesh333-C_Conversion \
+        -Dsonar.organization=mahesh333-c \
         -Dsonar.host.url=https://sonarcloud.io \
         -Dsonar.sources=.
