@@ -18,40 +18,31 @@ jobs:
         java-version: 11
         distribution: 'adopt'
         
-    - name: Build
-      run: mvn clean package
+    # - name: Build
+    #   run: mvn clean package
       
-    - name: Dependency Check
-      run: mvn org.owasp:dependency-check-maven:aggregate
+    # - name: Dependency Check
+    #   run: mvn org.owasp:dependency-check-maven:aggregate
       
     - name: Build Docker Image
       run: docker build -t mahec/image .
       
-    - name: Push Docker Image
-      run: |
-        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker tag mahec/image mahec/demo
-        docker push mahec/demo
+    # - name: Push Docker Image
+    #   run: |
+    #     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+    #     docker tag mahec/image mahec/demo
+    #     docker push mahec/demo
         
-    - name: Snyk Code Scanning
-      run: npx snyk test --all-projects || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
-
-    - name: SonarCloud Code Analysis
-      uses: sonarsource/sonarcloud-github-action@v2.0.2
-      with:
-        organization: "mahesh333-c"
-        projectKey: "Mahesh333-C_Conversion"
-        token: ${{ secrets.SONAR_TOKEN }}
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    # - name: Snyk Code Scanning
+    #   run: npx snyk test --all-projects || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
           
-    # - name: SonarCloud Code Analysis
-      # uses: sonarsource/sonarqube-scan-action@v1
-      # with:
-      #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-      #   SONAR_PROJECT_KEY: Mahesh333-C_Conversion
-      #   project-base-dir: .
+    - name: SonarCloud Code Analysis
+    #   uses: sonarsource/sonarqube-scan-action@v1
+    #   with:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+    #     SONAR_PROJECT_KEY: Mahesh333-C_Conversion
+    #     project-base-dir: .
 
       # uses: SonarSource/sonarcloud-github-action@v2.0.2
       # with:
@@ -64,11 +55,11 @@ jobs:
         # project: "Mahesh333-C_Conversion"
         # token: ${{ secrets.SONAR_TOKEN }}
       
-      # run: |
-      #   mvn sonar:sonar \
-      #   -Dsonar.projectKey=Mahesh333-C_Conversion \
-      #   -Dsonar.organization=mahesh333-c \
-      #   -Dsonar.host.url=https://sonarcloud.io \
-      #   -Dsonar.sources=.
-      # env:
-      #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        mvn sonar:sonar \
+        -Dsonar.projectKey=Mahesh333-C_Conversion \
+        -Dsonar.organization=mahesh333-c \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.sources=.
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
