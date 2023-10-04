@@ -39,9 +39,14 @@ jobs:
     - name: SonarCloud Code Analysis
       uses: SonarSource/sonarcloud-github-action@v2.0.2
       with:
-        organization: "mahesh333-c"
-        project: "Mahesh333-C_Conversion"
-        token: ${{ secrets.SONAR_TOKEN }}
+        args: >
+          -Dsonar.organization=mahesh333-c
+          -Dsonar.projectKey=Mahesh333-C_Conversion
+          -Dsonar.sources=.
+        entryPoint: scanner
+        # organization: "mahesh333-c"
+        # project: "Mahesh333-C_Conversion"
+        # token: ${{ secrets.SONAR_TOKEN }}
       # run: |
       #   mvn sonar:sonar \
       #   -Dsonar.projectKey=Mahesh333-C_Conversion \
