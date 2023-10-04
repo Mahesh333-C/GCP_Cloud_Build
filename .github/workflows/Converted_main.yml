@@ -60,3 +60,5 @@ jobs:
         -Dsonar.organization=mahesh333-c \
         -Dsonar.host.url=https://sonarcloud.io \
         -Dsonar.sources=.
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
