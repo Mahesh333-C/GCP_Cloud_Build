@@ -64,6 +64,6 @@ jobs:
         -Dsonar.projectKey=Mahesh333-C_Conversion \
         -Dsonar.organization=mahesh333-c \
         -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.sources=./tests
+        -Dsonar.sources=/src/main
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
