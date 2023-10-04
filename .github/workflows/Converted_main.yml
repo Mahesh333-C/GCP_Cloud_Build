@@ -42,6 +42,8 @@ jobs:
         organization: "mahesh333-c"
         projectKey: "Mahesh333-C_Conversion"
         token: ${{ secrets.SONAR_TOKEN }}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
     # - name: SonarCloud Code Analysis
       # uses: sonarsource/sonarqube-scan-action@v1
