@@ -18,8 +18,8 @@ jobs:
         java-version: 11
         distribution: 'adopt'
         
-    # - name: Build
-    #   run: mvn clean package
+    - name: Build
+      run: mvn clean package
       
     # - name: Dependency Check
     #   run: mvn org.owasp:dependency-check-maven:aggregate
