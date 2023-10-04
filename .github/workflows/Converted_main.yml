@@ -40,8 +40,15 @@ jobs:
       run: |
         pwd
         ls -la
-          
+
     - name: SonarCloud Code Analysis
+      uses: sonarsource/sonarcloud-github-action@v1
+      with:
+        organization: "mahesh333-c"
+        projectKey: "Mahesh333-C_Conversion"
+        token: ${{ secrets.SONAR_TOKEN }}
+          
+    # - name: SonarCloud Code Analysis
       # uses: sonarsource/sonarqube-scan-action@v1
       # with:
       #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -59,11 +66,12 @@ jobs:
         # organization: "mahesh333-c"
         # project: "Mahesh333-C_Conversion"
         # token: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        mvn sonar:sonar \
-        -Dsonar.projectKey=Mahesh333-C_Conversion \
-        -Dsonar.organization=mahesh333-c \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.sources=.
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      # run: |
+      #   mvn sonar:sonar \
+      #   -Dsonar.projectKey=Mahesh333-C_Conversion \
+      #   -Dsonar.organization=mahesh333-c \
+      #   -Dsonar.host.url=https://sonarcloud.io \
+      #   -Dsonar.sources=.
+      # env:
+      #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
