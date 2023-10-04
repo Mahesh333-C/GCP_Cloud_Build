@@ -37,9 +37,14 @@ jobs:
       run: npx snyk test --all-projects || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
     
     - name: SonarCloud Code Analysis
-      run: |
-        mvn sonar:sonar \
-        -Dsonar.projectKey=Mahesh333-C_Conversion \
-        -Dsonar.organization=mahesh333-c \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.sources=.
+      uses: SonarSource/sonarcloud-github-action@v2.0.2
+      with:
+        organization: "mahesh333-c"
+        project: "Mahesh333-C_Conversion"
+        token: ${{ secrets.SONAR_TOKEN }}
+      # run: |
+      #   mvn sonar:sonar \
+      #   -Dsonar.projectKey=Mahesh333-C_Conversion \
+      #   -Dsonar.organization=mahesh333-c \
+      #   -Dsonar.host.url=https://sonarcloud.io \
+      #   -Dsonar.sources=.
