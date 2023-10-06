@@ -24,7 +24,7 @@ stages:
     - script: mvn clean package
       displayName: 'Build'
 
-    - script: mvn org.owasp:dependency-check-maven-plugin:aggregate
+    - script: mvn org.owasp:dependency-check-maven-plugin:8.4.0:aggregate
       displayName: 'Dependency Check'
 
     - script: docker build -t mahec/image .
