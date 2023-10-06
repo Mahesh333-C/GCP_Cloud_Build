@@ -1,0 +1,49 @@
+trigger:
+  branches:
+    include:
+      - test
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: 'Build'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build'
+    steps:
+    - checkout: self
+   
+    # - task: UseJavaVersion@1
+    #   displayName: 'Set up JDK 11'
+    #   inputs:
+    #     versionSpec: '11'
+    #     addToPath: true
+
+    - script: mvn clean package
+      displayName: 'Build'
+
+    - script: mvn org.owasp:dependency-check-maven-plugin:aggregate
+      displayName: 'Dependency Check'
+
+    - script: docker build -t mahec/image .
+      displayName: 'Build Docker Image'
+
+    - script: |
+        echo $(DOCKER_PASSWORD) | docker login -u $(DOCKER_USERNAME) --password-stdin
+        docker tag mahec/image mahec/demo
+        docker push mahec/demo
+      displayName: 'Push Docker Image'
+  
+    - script: npx snyk test --all-projects || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
+      displayName: 'Snyk Code Scanning'
+ 
+    - script: |
+        mvn sonar:sonar \
+        -Dsonar.projectKey=Mahesh333-C_Conversion \
+        -Dsonar.organization=mahesh333-c \
+        -Dsonar.host.url=https://sonarcloud.io
+      env:
+        SONAR_TOKEN: $(SONAR_TOKEN)
+      displayName: 'SonarCloud Code Analysis'
