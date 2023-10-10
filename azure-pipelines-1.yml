@@ -9,7 +9,7 @@ pr:
       - '*'
 
 stages:
-  - stage: Build Maven
+  - stage: BuildMaven
     jobs:
       - job: Build
         displayName: Build Maven
@@ -22,7 +22,7 @@ stages:
               mavenPomFile: 'pom.xml'
               goals: 'clean install'
 
-  - stage: Dependency check
+  - stage: Dependencycheck
     jobs:
       - job: DependencyCheck
         displayName: Dependency check
@@ -36,7 +36,7 @@ stages:
               ./dependency-check/bin/dependency-check.sh --scan . --format HTML
             displayName: Run OWASP Dependency-Check
 
-  - stage: Build docker image
+  - stage: Builddockerimage
     jobs:
       - job: BuildDockerImage
         displayName: Build docker image
@@ -47,7 +47,7 @@ stages:
               docker build -t mahec/devops-integration .
             displayName: Build Docker Image
 
-  - stage: Push image to Hub
+  - stage: PushimagetoHub
     jobs:
       - job: PushImageToHub
         displayName: Push image to Hub
@@ -59,7 +59,7 @@ stages:
               docker push mahec/demo
             displayName: Push Docker Image
 
-  - stage: Snyk Code Scan
+  - stage: SnykCodeScan
     jobs:
       - job: SnykCodeScan
         displayName: Snyk Code Scan
@@ -70,7 +70,7 @@ stages:
               npx snyk test --all-licenses --token=0449b11d-9608-452e-8c8b-f6a13282af9f
             displayName: Snyk Code Scan
 
-  - stage: SonarCloud Code Analysis
+  - stage: SonarCloudCodeAnalysis
     jobs:
       - job: SonarCloudCodeAnalysis
         displayName: SonarCloud Code Analysis
