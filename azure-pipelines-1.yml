@@ -8,10 +8,6 @@ pr:
     include:
       - '*'
 
-variables:
-  DOCKER_HUB_CREDENTIALS: $(dockerhubpwd)
-  SNYK_API_TOKEN: $(snyk)
-
 stages:
   - stage: Build Maven
     jobs:
@@ -33,11 +29,12 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          
-          - task: DependencyCheck@3
-            inputs:
-              additionalArguments: '--format HTML'
-              odcInstallation: 'Dependency-Check'
+          - checkout: self
+          - script: |
+              wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-6.5.0-release.zip
+              unzip dependency-check-*.zip
+              ./dependency-check/bin/dependency-check.sh --scan . --format HTML
+            displayName: Run OWASP Dependency-Check
 
   - stage: Build docker image
     jobs:
@@ -83,7 +80,6 @@ stages:
           - task: SonarQubePrepare@4
             inputs:
               SonarQube: 'sonarcloud'
-              organization: 'sonartest333'
               scannerMode: 'MSBuild'
 
           - task: Maven@3
