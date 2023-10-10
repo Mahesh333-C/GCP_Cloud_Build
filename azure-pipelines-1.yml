@@ -22,41 +22,51 @@ stages:
               mavenPomFile: 'pom.xml'
               goals: 'clean install'
 
-  - stage: Dependencycheck
-    jobs:
-      - job: DependencyCheck
-        displayName: Dependency check
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - checkout: self
-          - script: mvn org.owasp:dependency-check-maven:8.0.0:purge
-            displayName: 'Dependency Check'
-
-  - stage: Builddockerimage
-    dependsOn: BuildMaven
-    jobs:
-      - job: BuildDockerImage
-        displayName: Build docker image
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
           - script: |
               docker build -t mahec/devops-integration .
             displayName: Build Docker Image
 
-  - stage: PushimagetoHub
-    dependsOn: Builddockerimage
-    jobs:
-      - job: PushImageToHub
-        displayName: Push image to Hub
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
           - script: |
               docker login -u mahec -p mahesh3@AM
               docker push mahec/devops-integration
             displayName: Push Docker Image
+
+
+  # - stage: Dependencycheck
+  #   jobs:
+  #     - job: DependencyCheck
+  #       displayName: Dependency check
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       steps:
+  #         - checkout: self
+  #         - script: mvn org.owasp:dependency-check-maven:8.0.0:purge
+  #           displayName: 'Dependency Check'
+
+  # - stage: Builddockerimage
+  #   dependsOn: BuildMaven
+  #   jobs:
+  #     - job: BuildDockerImage
+  #       displayName: Build docker image
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       steps:
+  #         - script: |
+  #             docker build -t mahec/devops-integration .
+  #           displayName: Build Docker Image
+
+  # - stage: PushimagetoHub
+  #   dependsOn: Builddockerimage
+  #   jobs:
+  #     - job: PushImageToHub
+  #       displayName: Push image to Hub
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       steps:
+  #         - script: |
+  #             docker login -u mahec -p mahesh3@AM
+  #             docker push mahec/devops-integration
+  #           displayName: Push Docker Image
 
   - stage: SnykCodeScan
     jobs:
