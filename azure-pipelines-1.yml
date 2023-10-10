@@ -76,7 +76,8 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - script: |
-              npx snyk test --all-licenses --token=0449b11d-9608-452e-8c8b-f6a13282af9f
+              snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
+              npx snyk test --all-projects
             displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
