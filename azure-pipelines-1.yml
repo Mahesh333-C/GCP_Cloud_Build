@@ -76,6 +76,8 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - script: |
+              npm install -g snyk
+              snyk auth 43ed591e32bdfe31bb3b323ad64617edc4d1e5f2
               npx snyk test --all-projects
             displayName: Snyk Code Scan
 
