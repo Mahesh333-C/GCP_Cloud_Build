@@ -91,7 +91,7 @@ stages:
       - checkout: self
       - task: SonarCloudPrepare@1
         inputs:
-          SonarCloud: 'sonarcloud'
+          SonarCloud: 'sonartest333'
           organization: 'sonartest333'
           scannerMode: 'CLI'
         displayName: 'Prepare analysis on SonarCloud'
