@@ -68,19 +68,19 @@ stages:
   #             docker push mahec/devops-integration
   #           displayName: Push Docker Image
 
-  - stage: SnykCodeScan
-    jobs:
-      - job: SnykCodeScan
-        displayName: Snyk Code Scan
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - script: |
-              chmod +x mvnw
-              npm install -g snyk
-              snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
-              snyk test --all-licenses -d || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
-            displayName: Snyk Code Scan
+  # - stage: SnykCodeScan
+  #   jobs:
+  #     - job: SnykCodeScan
+  #       displayName: Snyk Code Scan
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       steps:
+  #         - script: |
+  #             chmod +x mvnw
+  #             npm install -g snyk
+  #             snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
+  #             snyk test --all-licenses -d || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
+  #           displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
     displayName: 'SonarCloud Code Analysis'
