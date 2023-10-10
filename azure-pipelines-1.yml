@@ -8,28 +8,28 @@ pr:
     include:
       - '*'
 
-stages:
-  - stage: BuildMaven
-    jobs:
-      - job: Build
-        displayName: Build Maven
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - checkout: self
-          - task: Maven@3
-            inputs:
-              mavenPomFile: 'pom.xml'
-              goals: 'clean install'
+# stages:
+#   - stage: BuildMaven
+#     jobs:
+#       - job: Build
+#         displayName: Build Maven
+#         pool:
+#           vmImage: 'ubuntu-latest'
+#         steps:
+#           - checkout: self
+#           - task: Maven@3
+#             inputs:
+#               mavenPomFile: 'pom.xml'
+#               goals: 'clean install'
 
-          - script: |
-              docker build -t mahec/devops-integration .
-            displayName: Build Docker Image
+#           - script: |
+#               docker build -t mahec/devops-integration .
+#             displayName: Build Docker Image
 
-          - script: |
-              docker login -u mahec -p mahesh3@AM
-              docker push mahec/devops-integration
-            displayName: Push Docker Image
+#           - script: |
+#               docker login -u mahec -p mahesh3@AM
+#               docker push mahec/devops-integration
+#             displayName: Push Docker Image
 
 
   # - stage: Dependencycheck
@@ -76,7 +76,9 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - script: |
-              npx snyk test --all-licenses --token=0449b11d-9608-452e-8c8b-f6a13282af9f
+              snyk auth
+              npx snyk test --all-licenses
+        #  --token=0449b11d-9608-452e-8c8b-f6a13282af9f
             displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
