@@ -9,27 +9,27 @@ pr:
       - '*'
 
 stages:
-  # - stage: BuildMaven
-  #   jobs:
-  #     - job: Build
-  #       displayName: Build Maven
-  #       pool:
-  #         vmImage: 'ubuntu-latest'
-  #       steps:
-  #         - checkout: self
-  #         - task: Maven@3
-  #           inputs:
-  #             mavenPomFile: 'pom.xml'
-  #             goals: 'clean install'
+  - stage: BuildMaven
+    jobs:
+      - job: Build
+        displayName: Build Maven
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'clean install'
 
-  #         - script: |
-  #             docker build -t mahec/devops-integration .
-  #           displayName: Build Docker Image
+          - script: |
+              docker build -t mahec/devops-integration .
+            displayName: Build Docker Image
 
-  #         - script: |
-  #             docker login -u mahec -p mahesh3@AM
-  #             docker push mahec/devops-integration
-  #           displayName: Push Docker Image
+          - script: |
+              docker login -u mahec -p mahesh3@AM
+              docker push mahec/devops-integration
+            displayName: Push Docker Image
 
 
   # - stage: Dependencycheck
@@ -82,21 +82,21 @@ stages:
   #             snyk test --all-licenses -d || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
   #           displayName: Snyk Code Scan
 
-  - stage: SonarCloudCodeAnalysis
-    jobs:
-    - job: Analysis
-      displayName: SonarCloud Code Analysis
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-      - checkout: self
-        fetchDepth: 1
-      - task: SonarCloudPrepare@1
-        inputs:
-          SonarCloud: 'sonarcloud'
-          organization: 'sonartest333'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'sonartest333'
-      - task: SonarCloudAnalyze@1
-      - task: SonarCloudPublish@1
+  # - stage: SonarCloudCodeAnalysis
+  #   jobs:
+  #   - job: Analysis
+  #     displayName: SonarCloud Code Analysis
+  #     pool:
+  #       vmImage: 'ubuntu-latest'
+  #     steps:
+  #     - checkout: self
+  #       fetchDepth: 1
+  #     - task: SonarCloudPrepare@1
+  #       inputs:
+  #         SonarCloud: 'sonarcloud'
+  #         organization: 'sonartest333'
+  #         scannerMode: 'CLI'
+  #         configMode: 'manual'
+  #         cliProjectKey: 'sonartest333'
+  #     - task: SonarCloudAnalyze@1
+  #     - task: SonarCloudPublish@1
