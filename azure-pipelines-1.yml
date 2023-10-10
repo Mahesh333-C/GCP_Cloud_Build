@@ -70,6 +70,7 @@ stages:
 
   - stage: SnykCodeScan
     jobs:
+
       - job: SnykCodeScan
         displayName: Snyk Code Scan
         pool:
@@ -77,7 +78,8 @@ stages:
         steps:
           - script: |
               npm install -g snyk
-              npx snyk test --all-licenses --token=0449b11d-9608-452e-8c8b-f6a13282af9f
+              snyk auth
+              npx snyk test --all-licenses
             displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
