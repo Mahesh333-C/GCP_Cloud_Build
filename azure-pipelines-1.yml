@@ -83,19 +83,20 @@ stages:
   #           displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
-    displayName: 'SonarCloud Code Analysis'
     jobs:
     - job: Analysis
-      displayName: 'SonarCloud Code Analysis'
+      displayName: SonarCloud Code Analysis
+      pool:
+        vmImage: 'ubuntu-latest'
       steps:
       - checkout: self
+        fetchDepth: 1
       - task: SonarCloudPrepare@1
         inputs:
-          SonarCloud: 'sonartest333'
+          SonarCloud: 'sonarcloud'
           organization: 'sonartest333'
           scannerMode: 'CLI'
-        displayName: 'Prepare analysis on SonarCloud'
-      - script: |
-          mvn sonar:sonar -Dsonar.projectKey=sonartest333 -Dsonar.organization=sonartest333 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=43ed591e32bdfe31bb3b323ad64617edc4d1e5f2
-        displayName: 'SonarCloud Code Analysis'
-        continueOnError: true
+          configMode: 'manual'
+          cliProjectKey: 'sonartest333'
+      - task: SonarCloudAnalyze@1
+      - task: SonarCloudPublish@1
