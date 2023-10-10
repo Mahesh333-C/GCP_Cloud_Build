@@ -94,6 +94,7 @@ stages:
             inputs:
               SonarQube: 'sonarcloud'
               scannerMode: 'MSBuild'
+              projectKey: 'sonartest333'
 
           - task: Maven@3
             inputs:
