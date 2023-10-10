@@ -77,8 +77,7 @@ stages:
         steps:
           - script: |
               npm install -g snyk
-              snyk auth 613ecec6-d7b1-48dc-936e-cc20201b297d
-              npx snyk test --all-projects
+              npx snyk test --all-licenses --token=0449b11d-9608-452e-8c8b-f6a13282af9f
             displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
