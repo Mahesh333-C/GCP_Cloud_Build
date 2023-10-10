@@ -30,11 +30,8 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
-          - script: |
-              wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-6.5.0-release.zip
-              unzip dependency-check-*.zip
-              ./dependency-check/bin/dependency-check.sh --scan . --format HTML
-            displayName: Run OWASP Dependency-Check
+          - script: mvn org.owasp:dependency-check-maven:8.0.0:purge
+            displayName: 'Dependency Check'
 
   - stage: Builddockerimage
     jobs:
