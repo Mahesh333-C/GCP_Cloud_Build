@@ -77,9 +77,11 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - script: |
+              pwd
+              ls -la
               npm install -g snyk
               snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
-              snyk test --all-licenses
+              snyk test --all-licenses -d
             displayName: Snyk Code Scan
 
   - stage: SonarCloudCodeAnalysis
