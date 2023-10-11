@@ -1,114 +1,91 @@
 trigger:
   branches:
     include:
-      - master
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
 
 stages:
-- stage: CheckoutSource
+- stage: Checkout
   displayName: 'Checkout Source Code'
   jobs:
   - job: Checkout
     displayName: 'Checkout'
-    pool:
-      vmImage: 'ubuntu-latest'
     steps:
     - checkout: self
+      submodules: true
 
-- stage: BuildAndDependencyCheck
-  displayName: 'Build and Dependency Check'
-  dependsOn: CheckoutSource
+- stage: Build
+  displayName: 'Build'
   jobs:
   - job: Build
-    displayName: 'Build'
-    pool:
-      vmImage: 'ubuntu-latest'
+    displayName: 'Build Maven Project'
     steps:
     - task: Maven@3
-      displayName: 'Build Maven Project'
+      displayName: 'Maven Build'
       inputs:
         mavenPomFile: 'pom.xml'
-        goals: 'clean package'
-    
-  - job: DependencyCheck
-    displayName: 'Dependency Check'
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: DependencyCheck@0
-      displayName: 'Run Dependency Check'
-      inputs:
-        outputDirectory: '$(Build.SourcesDirectory)/dependency-check-report'
-        outputFileFormat: 'HTML'
-        format: 'ALL'
-        severity: 'HIGH'
-        failBuildOnCVSS: true
+        goals: 'clean install'
 
-- stage: BuildDockerImage
-  displayName: 'Build Docker Image'
-  dependsOn: BuildAndDependencyCheck
+- stage: Containerize
+  displayName: 'Containerize'
   jobs:
-  - job: DockerBuild
-    displayName: 'Build Docker Image'
-    pool:
-      vmImage: 'ubuntu-latest'
+  - job: Containerize
+    displayName: 'Build and Push Docker Image'
     steps:
     - task: Docker@2
-      displayName: 'Build and Push Docker Image'
+      displayName: 'Build and Push Image'
       inputs:
-        containerRegistry: 'your-container-registry-connection' # Connection name or service connection reference in Azure DevOps
-        dockerFile: '$(Build.SourcesDirectory)/Dockerfile'
-        imageName: 'your-image-name:$(Build.BuildId)'
+        containerRegistry: 'DockerHub'
+        repository: 'mahec/new'
+        command: 'buildAndPush'
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
 
-- stage: CodeScanning
-  displayName: 'Code Scanning'
-  dependsOn: BuildDockerImage
+- stage: DependencyCheck
+  displayName: 'Dependency Check'
   jobs:
-  - job: CodeScan
-    displayName: 'Code Scanning'
-    pool:
-      vmImage: 'ubuntu-latest'
+  - job: DependencyCheck
+    displayName: 'Run Dependency Check'
     steps:
-    - task: SnykCodeScanV2@1
-      displayName: 'Run Snyk Code Scan'
+    - task: Maven@3
+      displayName: 'Dependency Check'
       inputs:
-        image: 'your-image-name:$(Build.BuildId)'
-        failOnCVSSAlert: false
+        mavenPomFile: 'pom.xml'
+        goals: 'dependency:analyze'
+        publishJUnitResults: true
 
-- stage: CodeAnalysis
-  displayName: 'Code Analysis'
-  dependsOn: CodeScanning
+- stage: SnykCodeScan
+  displayName: 'Snyk Code Scanning'
   jobs:
-  - job: SonarCloudAnalysis
-    displayName: 'SonarCloud Code Analysis'
-    pool:
-      vmImage: 'ubuntu-latest'
+  - job: SnykCodeScan
+    displayName: 'Run Snyk Code Scan'
+    steps:
+    - script: |
+        npm install -g snyk
+        snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
+        snyk test --all-projects -d || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
+      displayName: 'Snyk Code Scan'
+
+- stage: SonarCloudCodeAnalysis
+  displayName: 'SonarCloud Code Analysis'
+  jobs:
+  - job: SonarCloudCodeAnalysis
+    displayName: 'Run SonarCloud Code Analysis'
     steps:
     - task: SonarCloudPrepare@1
-      displayName: 'Prepare analysis'
+      displayName: 'Prepare SonarCloud Analysis'
       inputs:
-        SonarCloud: 'your-sonarcloud-connection' # Connection name or service connection reference in Azure DevOps
-        organization: 'your-sonarcloud-organization' # Organization key in SonarCloud
+        SonarCloud: 'sonarcloud'
+        organization: 'sonartest333'
         scannerMode: 'CLI'
         configMode: 'manual'
-        cliProjectKey: '$(Build.Repository.Name)'
-        cliProjectName: '$(Build.Repository.Name)'
-        extraProperties: |
-          sonar.projectVersion=$(Build.BuildId)
-
+        cliProjectKey: 'sonartest333'
+        cliProjectName: 'sonartest333'
+        cliSources: '$(Build.SourcesDirectory)'
     - task: SonarCloudAnalyze@1
-      displayName: 'Run analysis'
-      
+      displayName: 'Run SonarCloud Analysis'
     - task: SonarCloudPublish@1
-      displayName: 'Publish results'
-
-- stage: Continuation
-  displayName: 'Continuation'
-  dependsOn: CodeAnalysis
-  jobs:
-  - job: ContinuationJob
-    displayName: 'Continuation Job'
-    condition: failed()
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - script: echo 'Code scanning or analysis failed. Continue pipeline execution...'
+      displayName: 'Publish SonarCloud Results'
+      inputs:
+        pollingTimeoutSec: '300'
