@@ -16,10 +16,10 @@ stages:
     - checkout: self
       submodules: true
 
-- stage: Build
+- stage: BuildAndContainerize
   displayName: 'Build'
   jobs:
-  - job: Build
+  - job: BuildAndContainerize
     displayName: 'Build Maven Project'
     steps:
     - task: Maven@3
@@ -27,13 +27,6 @@ stages:
       inputs:
         mavenPomFile: 'pom.xml'
         goals: 'clean install'
-
-- stage: Containerize
-  displayName: 'Containerize'
-  jobs:
-  - job: Containerize
-    displayName: 'Build and Push Docker Image'
-    steps:
     - task: Docker@2
       displayName: 'Build and Push Image'
       inputs:
@@ -41,6 +34,20 @@ stages:
         repository: 'mahec/new'
         command: 'buildAndPush'
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+
+# - stage: Containerize
+#   displayName: 'Containerize'
+#   jobs:
+#   - job: Containerize
+#     displayName: 'Build and Push Docker Image'
+#     steps:
+#     - task: Docker@2
+#       displayName: 'Build and Push Image'
+#       inputs:
+#         containerRegistry: 'DockerHub'
+#         repository: 'mahec/new'
+#         command: 'buildAndPush'
+#         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
 
 - stage: DependencyCheck
   displayName: 'Dependency Check'
