@@ -69,6 +69,7 @@ stages:
     displayName: 'Run Snyk Code Scan'
     steps:
     - script: |
+        chmod +x mvnw
         npm install -g snyk
         snyk auth 0449b11d-9608-452e-8c8b-f6a13282af9f
         snyk test --all-projects -d || echo "Snyk scan encountered vulnerabilities, but the workflow will continue."
