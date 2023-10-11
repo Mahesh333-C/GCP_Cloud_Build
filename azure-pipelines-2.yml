@@ -1,0 +1,114 @@
+trigger:
+  branches:
+    include:
+      - master
+
+stages:
+- stage: CheckoutSource
+  displayName: 'Checkout Source Code'
+  jobs:
+  - job: Checkout
+    displayName: 'Checkout'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
+
+- stage: BuildAndDependencyCheck
+  displayName: 'Build and Dependency Check'
+  dependsOn: CheckoutSource
+  jobs:
+  - job: Build
+    displayName: 'Build'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Maven@3
+      displayName: 'Build Maven Project'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean package'
+    
+  - job: DependencyCheck
+    displayName: 'Dependency Check'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DependencyCheck@0
+      displayName: 'Run Dependency Check'
+      inputs:
+        outputDirectory: '$(Build.SourcesDirectory)/dependency-check-report'
+        outputFileFormat: 'HTML'
+        format: 'ALL'
+        severity: 'HIGH'
+        failBuildOnCVSS: true
+
+- stage: BuildDockerImage
+  displayName: 'Build Docker Image'
+  dependsOn: BuildAndDependencyCheck
+  jobs:
+  - job: DockerBuild
+    displayName: 'Build Docker Image'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      displayName: 'Build and Push Docker Image'
+      inputs:
+        containerRegistry: 'your-container-registry-connection' # Connection name or service connection reference in Azure DevOps
+        dockerFile: '$(Build.SourcesDirectory)/Dockerfile'
+        imageName: 'your-image-name:$(Build.BuildId)'
+
+- stage: CodeScanning
+  displayName: 'Code Scanning'
+  dependsOn: BuildDockerImage
+  jobs:
+  - job: CodeScan
+    displayName: 'Code Scanning'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: SnykCodeScanV2@1
+      displayName: 'Run Snyk Code Scan'
+      inputs:
+        image: 'your-image-name:$(Build.BuildId)'
+        failOnCVSSAlert: false
+
+- stage: CodeAnalysis
+  displayName: 'Code Analysis'
+  dependsOn: CodeScanning
+  jobs:
+  - job: SonarCloudAnalysis
+    displayName: 'SonarCloud Code Analysis'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: SonarCloudPrepare@1
+      displayName: 'Prepare analysis'
+      inputs:
+        SonarCloud: 'your-sonarcloud-connection' # Connection name or service connection reference in Azure DevOps
+        organization: 'your-sonarcloud-organization' # Organization key in SonarCloud
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '$(Build.Repository.Name)'
+        cliProjectName: '$(Build.Repository.Name)'
+        extraProperties: |
+          sonar.projectVersion=$(Build.BuildId)
+
+    - task: SonarCloudAnalyze@1
+      displayName: 'Run analysis'
+      
+    - task: SonarCloudPublish@1
+      displayName: 'Publish results'
+
+- stage: Continuation
+  displayName: 'Continuation'
+  dependsOn: CodeAnalysis
+  jobs:
+  - job: ContinuationJob
+    displayName: 'Continuation Job'
+    condition: failed()
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo 'Code scanning or analysis failed. Continue pipeline execution...'
